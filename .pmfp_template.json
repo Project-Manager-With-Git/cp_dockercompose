@@ -1,0 +1,18 @@
+{
+    "description": "各种语言不同需求的docker-compose模板",
+    "author": "hsz",
+    "template_type": "components",
+    "template_keys": {
+        "app_name": {
+            "description": "服务应用名,默认为项目名称",
+            "default": "{{ project_name }}"
+        }
+    },
+    "components": {
+        "kafka_broker_standalone.yml": {
+            "source": "kafka_broker_standalone.yml.jinja",
+            "description": "单机模式以kafka作为中间人的生产消费模式的compose文件",
+            "default_path": "docker-compose.yml"
+        }
+    }
+}
