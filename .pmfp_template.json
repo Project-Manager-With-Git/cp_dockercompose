@@ -13,6 +13,11 @@
             "source": "kafka_broker_standalone.yml.jinja",
             "description": "单机模式以kafka作为中间人的生产消费模式的compose文件",
             "default_path": "docker-compose.yml"
+        },
+        "etcd_broker_standalone": {
+            "source": "etcd_broker_standalone.yml.jinja",
+            "description": "单机模式以etcd作为中间人的发布订阅模式的compose文件",
+            "default_path": "docker-compose.yml"
         }
     }
 }

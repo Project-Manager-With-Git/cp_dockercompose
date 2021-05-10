@@ -1,0 +1,68 @@
+version: '2.4'
+services:
+    etcd:
+        image: quay.io/coreos/etcd
+        ports:
+          - target: 2379
+            published: 2379
+            protocol: tcp
+            mode: host
+          - target: 2380
+            published: 2380
+            protocol: tcp
+            mode: host
+        environment:
+          - ETCDCTL_API=3
+        networks:
+            local:
+                aliases:
+                - "etcd.local"
+        volumes:
+          - ./data:/etcd-data
+        command:
+          - /usr/local/bin/etcd
+          - --data-dir=/etcd-data
+          - --name
+          - node1
+          - --initial-advertise-peer-urls
+          - http://etcd.local:2380
+          - --listen-peer-urls
+          - http://0.0.0.0:2380
+          - --advertise-client-urls
+          - http://etcd.local:2379
+          - --listen-client-urls
+          - http://0.0.0.0:2379
+          - --initial-cluster
+          - node1=http://etcd.local:2380
+    
+    watcher:
+        build: ./
+        depends_on:
+            - etcd
+        networks:
+            local:
+                aliases:
+                - "etcd.local"
+        environment:
+            {{ app_name | upper }}_WATCHER_WATCH_ETCD_KEY: "/test"
+            {{ app_name | upper }}_WATCHER_WATCH_ETCD_URL: "etcd://etcd:2379"
+            {{ app_name | upper }}_WATCHER_WATCH_ETCD_PREFIX: "true"
+            {{ app_name | upper }}_WATCHER_LOG_LEVEL: "INFO"
+        command: ["{{ app_name }}_watcher.pyz"]
+
+    sender:
+        build: ./
+        depends_on:
+            - watcher
+        networks:
+            local:
+                aliases:
+                - "etcd.local"
+        environment:
+            {{ app_name | upper }}_SENDER_SEND_ETCD_URL: "etcd://etcd:2379"
+            {{ app_name | upper }}_SENDER_LOG_LEVEL: "INFO"
+        command: ["{{ app_name }}_sender.pyz"]
+
+networks:
+    local:
+        driver: bridge
