@@ -2,6 +2,10 @@ version: '2.4'
 services:
     etcd:
         image: quay.io/coreos/etcd
+        logging:
+            options:
+                max-file: 3
+                max-size: 10m
         ports:
           - target: 2379
             published: 2379
@@ -39,6 +43,10 @@ services:
         build: ./
         depends_on:
             - etcd
+        logging:
+            options:
+                max-file: 3
+                max-size: 10m
         networks:
             local:
                 aliases:
@@ -54,6 +62,10 @@ services:
         build: ./
         depends_on:
             - watcher
+        logging:
+            options:
+                max-file: 3
+                max-size: 10m
         networks:
             local:
                 aliases:

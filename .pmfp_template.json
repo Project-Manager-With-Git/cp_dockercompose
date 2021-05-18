@@ -18,6 +18,12 @@
             "source": "etcd_broker_standalone.yml.jinja",
             "description": "单机模式以etcd作为中间人的发布订阅模式的compose文件",
             "default_path": "docker-compose.yml"
+        },
+        "server_standalone": {
+            "source": "server_standalone.yml.jinja",
+            "description": "单机模式的服务的compose文件",
+            "default_path": "docker-compose.yml"
         }
     }
 }
+

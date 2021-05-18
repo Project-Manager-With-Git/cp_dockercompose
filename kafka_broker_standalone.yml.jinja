@@ -2,6 +2,10 @@ version: '2.4'
 services:
     zookeeper:
         image: wurstmeister/zookeeper
+        logging:
+            options:
+                max-file: 3
+                max-size: 10m
         ports:
             - "2181:2181"
         networks:
@@ -13,6 +17,10 @@ services:
         image: wurstmeister/kafka
         depends_on:
             - zookeeper
+        logging:
+            options:
+                max-file: 3
+                max-size: 10m
         ports:
             - "9092"
         environment:
@@ -27,6 +35,10 @@ services:
         build: ./
         depends_on:
             - kafka
+        logging:
+            options:
+                max-file: 3
+                max-size: 10m
         networks:
             local:
                 aliases:
