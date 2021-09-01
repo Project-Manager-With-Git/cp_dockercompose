@@ -1,4 +1,4 @@
-# cp_dockercompose
+# v0.0.1
 
 docker-compose的组件集合,提供了常见场景下的调试用`docker-compose`模板
 
