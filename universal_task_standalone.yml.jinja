@@ -1,0 +1,10 @@
+version: '2.4'
+services:
+    serv:
+        build: ./
+        logging:
+            options:
+                max-file: 3
+                max-size: 10m
+        environment:
+            {{ app_name | upper }}_LOG_LEVEL: "INFO"

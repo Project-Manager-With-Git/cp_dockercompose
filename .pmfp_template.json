@@ -23,6 +23,11 @@
             "source": "server_standalone.yml.jinja",
             "description": "单机模式的服务的compose文件",
             "default_path": "docker-compose.yml"
+        },
+        "universal_task_standalone": {
+            "source": "universal_task_standalone.yml.jinja",
+            "description": "单机模式的通用任务程序的compose文件",
+            "default_path": "docker-compose.yml"
         }
     }
 }
