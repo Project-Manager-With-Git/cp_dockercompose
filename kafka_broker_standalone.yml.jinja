@@ -1,36 +1,38 @@
 version: '2.4'
 services:
-    zookeeper:
-        image: wurstmeister/zookeeper:latest
-        logging:
-            options:
-                max-file: 3
-                max-size: 10m
-        ports:
-            - "2181:2181"
-        networks:
-            local:
-                aliases:
-                - "zookeeper.local"
-          
-    kafka:
-        image: wurstmeister/kafka
-        depends_on:
-            - zookeeper
-        logging:
-            options:
-                max-file: 3
-                max-size: 10m
-        ports:
-            - "9092"
-        environment:
-            KAFKA_ADVERTISED_HOST_NAME: kafka.local
-            KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-            KAFKA_CREATE_TOPICS: "topic1-1-1"
-        networks:
-            local:
-                aliases:
-                - "kafka.local"
+    # kafka相关工具
+  zookeeper:
+    image: docker.io/bitnami/zookeeper:3.7
+    logging:
+      options:
+        max-file: 3
+        max-size: 10m
+    ports:
+      - "2181:2181"
+    volumes:
+      - "./zk/data:/bitnami"
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+  kafka:
+    image: docker.io/bitnami/kafka:3
+    depends_on:
+      - zookeeper
+    logging:
+      options:
+        max-file: 3
+        max-size: 10m
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: host.docker.internal
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_CREATE_TOPICS: "topic.test"
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_LOG_RETENTION_HOURS: 12
+      ALLOW_PLAINTEXT_LISTENER: yes
+    volumes:
+      - "./kafka/data:/bitnami"
+
     watcher:
         build: ./
         depends_on:
@@ -44,7 +46,7 @@ services:
                 aliases:
                 - "kafka.local"
         environment:
-            {{ app_name | upper }}_WATCHER_WATCH_KAFKA_TOPICS: "topic1-1-1"
+            {{ app_name | upper }}_WATCHER_WATCH_KAFKA_TOPICS: "topic.test"
             {{ app_name | upper }}_WATCHER_WATCH_KAFKA_URLS: "kafka:9092"
             {{ app_name | upper }}_WATCHER_WATCH_KAFKA_GROUP_ID: "test"
             {{ app_name | upper }}_WATCHER_LOG_LEVEL: "INFO"
@@ -59,6 +61,7 @@ services:
                 aliases:
                 - "kafka.local"
         environment:
+            {{ app_name | upper }}_SENDER_SEND_KAFKA_URLS: "kafka:9092"
             {{ app_name | upper }}_SENDER_SEND_KAFKA_URLS: "kafka:9092"
             {{ app_name | upper }}_SENDER_LOG_LEVEL: "INFO"
         command: ["{{ app_name }}_sender.pyz"]

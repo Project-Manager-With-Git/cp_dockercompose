@@ -1,43 +1,19 @@
 version: '2.4'
 services:
     etcd:
-        image: quay.io/coreos/etcd:latest
+        image: docker.io/bitnami/etcd:3.5.1
         logging:
-            options:
-                max-file: 3
-                max-size: 10m
-        ports:
-          - target: 2379
-            published: 2379
-            protocol: tcp
-            mode: host
-          - target: 2380
-            published: 2380
-            protocol: tcp
-            mode: host
+        options:
+            max-file: 3
+            max-size: 10m
         environment:
-          - ETCDCTL_API=3
-        networks:
-            local:
-                aliases:
-                - "etcd.local"
+        - ALLOW_NONE_AUTHENTICATION=yes
+        - ETCDCTL_API=3
+        ports:
+        - 12379:2379
+        - 12380:2380
         volumes:
-          - ./data:/etcd-data
-        command:
-          - /usr/local/bin/etcd
-          - --data-dir=/etcd-data
-          - --name
-          - node1
-          - --initial-advertise-peer-urls
-          - http://etcd.local:2380
-          - --listen-peer-urls
-          - http://0.0.0.0:2380
-          - --advertise-client-urls
-          - http://etcd.local:2379
-          - --listen-client-urls
-          - http://0.0.0.0:2379
-          - --initial-cluster
-          - node1=http://etcd.local:2380
+        - ./etcd/data:/bitnami/etcd
     
     watcher:
         build: ./
